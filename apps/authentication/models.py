@@ -29,6 +29,7 @@ class UserAccountManager(BaseUserManager):
         
         user.first_name = first_name
         user.last_name = last_name
+        user.set_password(password)
 
         user_name = extra_fields.get('user_name', None)
 
@@ -42,6 +43,8 @@ class UserAccountManager(BaseUserManager):
     def create_superuser(self, email, password, **extra_fields):
         user = self.create_user(email, password, **extra_fields)
         user.is_superuser = True
+        user.is_staff = True
+        user.is_active = True
         user.save(using=self._db)
 
         return user
@@ -58,6 +61,10 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+
+    is_active = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     objects = UserAccountManager()
 

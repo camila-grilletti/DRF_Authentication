@@ -73,7 +73,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -182,11 +182,32 @@ SIMPLE_JWT = {
 }
 
 DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'LOGIN_FIELD': 'email',
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'SEND_CONFIRMATION_EMAIL': True,
     'SEND_ACTIVATION_EMAIL': True,
-    'SERIALIZERS': {},
+
+    'PASSWORD_RESET_CONFIRM_URL': 'email/password_reset_confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': 'email/username_reset_confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'email/activate/{uid}/{token}',
+
+    'SERIALIZERS': {
+        'user_create': 'apps.authentication.serializers.UserCreateSerializer',
+        'user': 'apps.authentication.serializers.UserSerializer',
+        'current_user': 'apps.authentication.serializers.UserSerializer',
+        'user_delete': 'djoser.serializers.UserDeleteSerializer',
+    },
+
+    'TEMPLATES': {
+        'activation': 'email/auth/activation.html',
+        'confirmation': 'email/auth/confirmation.html',
+        'password_reset': 'email/auth/password_reset.html',
+        'password_changed_confirmation': 'email/auth/password_changed_confirmation.html',
+        'username_changed_confirmation': 'email/auth/username_changed_confirmation.html',
+        'username_reset': 'email/auth/username_reset.html',
+    }
 }
 
 CHANNELS_LAYERS = {
@@ -210,3 +231,14 @@ CACHES = {
 
 
 CHANNELS_ALLOWED_ORIGINS = 'http://localhost:3000'
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+if not DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = env("EMAIL_HOST")
+    EMAIL_PORT = env("EMAIL_PORT")
+    EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+    EMAIL_USE_TLS = env("EMAIL_USE_TLS") == "True"
+    DEFAULT_FROM_EMAIL = "Camila <no-reply@camilagrilletti.com>"
