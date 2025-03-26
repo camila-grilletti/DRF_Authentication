@@ -27,6 +27,7 @@ environ.Env.read_env()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
+VALID_API_KEYS = env.str('VALID_API_KEYS').split(',')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -45,17 +46,24 @@ DJANGO_APPS = [
 
 PROJECTS_APPS = [
     'apps.authentication',
+    'apps.userprofile',
 ]
 
 THIRD_PARTY_APPS = [
     'rest_framework',
+    'rest_framework_api',
     'channels',
+    'ckeditor',
+    'ckeditor_uploader',
     'djoser',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECTS_APPS + THIRD_PARTY_APPS
+
+CKEDITOR_CONFIGS = {'default': {'toolbar': 'full', 'autoParagraph': False}}
+CKEDITOR_UPLOAD_PATH = 'content/ckeditor/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
