@@ -58,12 +58,17 @@ THIRD_PARTY_APPS = [
     'djoser',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'axes'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECTS_APPS + THIRD_PARTY_APPS
 
 CKEDITOR_CONFIGS = {'default': {'toolbar': 'full', 'autoParagraph': False}}
 CKEDITOR_UPLOAD_PATH = 'content/ckeditor/'
+
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = lambda request: timedelta(minutes=5)
+AXES_LOCK_OUT_AT_FAILURE = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -74,6 +79,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -174,6 +180,7 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = (
+    'axes.backends.AxesStandaloneBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
